@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olhar Documental | Fotografia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. RESET & VARIÁVEIS (Suporte nativo a Tema Claro e Escuro)
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Tema Claro Padrão (Cinza Concreto/Industrial) */
+        :root {
+            --bg-color: #eaeaea;       
+            --text-color: #111111;     
+            --text-muted: #555555;     
+            --accent-color: #666666;   
+            --card-bg: #ffffff;        
+            --border-color: #cccccc;   
+            --navbar-bg: rgba(234, 234, 234, 0.15);
+            --navbar-scrolled: rgba(234, 234, 234, 0.95);
+            --overlay-hero: linear-gradient(to bottom, rgba(234, 234, 234, 0.2), rgba(234, 234, 234, 0.85));
+            --modal-bg: rgba(234, 234, 234, 0.98);
+            
+            --font-display: 'Inter', sans-serif;                
+            --font-code: 'Courier New', Courier, monospace;     
+        }
+
+        /* Tema Escuro (Ativado via Classe no Body) */
+        body.dark-mode {
+            --bg-color: #121212;       
+            --text-color: #f5f5f5;     
+            --text-muted: #a0a0a0;     
+            --accent-color: #888888;   
+            --card-bg: #1e1e1e;        
+            --border-color: #333333;   
+            --navbar-bg: rgba(18, 18, 18, 0.15);
+            --navbar-scrolled: rgba(18, 18, 18, 0.95);
+            --overlay-hero: linear-gradient(to bottom, rgba(12, 12, 12, 0.2), rgba(18, 18, 18, 0.9));
+            --modal-bg: rgba(12, 12, 12, 0.98);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-display);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* PROTEÇÃO EXTRA VIA CSS: Impede seleção azul de imagens e textos */
+        img, .gallery-item, .modal-content {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        /* ==========================================================================
+           2. MENU NAV BAR 
+           ========================================================================== */
+        .navbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--navbar-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            padding: 1.4rem 2rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.scrolled-nav .navbar {
+            position: sticky;
+            background-color: var(--navbar-scrolled);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 1.4rem;
+            letter-spacing: -1px;
+            text-transform: lowercase;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: var(--accent-color);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-family: var(--font-code);
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+            padding: 0.2rem 0;
+            font-weight: 700;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--text-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.5rem 0.8rem;
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .menu-toggle span {
+            height: 2px; 
+            width: 22px; 
+            background: var(--text-color); 
+            margin: 2px 0; 
+            display: block;
+        }
+
+        /* ==========================================================================
+           3. SLIDER TELA CHEIA (HERO)
+           ========================================================================== */
+        .hero-section-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-slider-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: 1;
+            background-color: #888;
+        }
+
+        .top-slider {
+            width: 100%;
+            height: 100%;
+            list-style: none;
+        }
+
+        .top-slider li {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slider-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-hero);
+            z-index: 2;
+            transition: background 0.4s ease;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 900px;
+            padding: 0 2rem;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .hero-content h1 {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 4.5rem; 
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            line-height: 1.05;
+        }
+
+        .hero-content p {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--text-color);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* ==========================================================================
+           4. ESTRUTURA DAS SEÇÕES & FILTROS
+           ========================================================================== */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 5rem 2rem 4rem 2rem;
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        section.active-section {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--text-color);
+            padding-left: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .filter-btn {
+            font-family: var(--font-code);
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.6rem 1.4rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--text-color);
+            color: var(--text-color);
+            background-color: rgba(128,128,128,0.05);
+        }
+
+        .filter-btn.active {
+            font-weight: bold;
+            border-width: 1.5px;
+        }
+
+        .essay-text-lead {
+            display: none; 
+            font-family: var(--font-code); 
+            font-size: 1.1rem;
+            color: var(--text-color);
+            max-width: 750px;              
+            margin-bottom: 4rem;           
+            line-height: 1.8;
+            white-space: pre-line;         
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 2.5rem;
+        }
+
+        .essay-text-lead.active-text {
+            display: block;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        /* ==========================================================================
+           5. GALERIA IMERSIVA COM EFETIO DE CARREGAMENTO (BLUR LAZY-IN)
+           ========================================================================== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); 
+            gap: 2rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            cursor: pointer;
+            background-color: var(--card-bg);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .gallery-item.hidden {
+            display: none;
+        }
+
+        .photo-wrapper {
+            width: 100%;
+            aspect-ratio: 3 / 2; 
+            overflow: hidden;
+            background-color: #555;
+            position: relative;
+        }
+
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: blur(15px);
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease-out;
+        }
+
+        .photo-wrapper img.loaded {
+            filter: blur(0);
+        }
+
+        .item-info {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 17, 17, 0.88); 
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.5rem;
+            opacity: 0; 
+            transition: opacity 0.4s ease;
+            z-index: 5;
+        }
+
+        .gallery-item:hover .item-info {
+            opacity: 1;
+        }
+
+        .gallery-item:hover .photo-wrapper img.loaded {
+            transform: scale(1.04);
+        }
+
+        .item-info .meta {
+            font-family: var(--font-code); 
+            font-size: 0.8rem;
+            color: #aaaaaa;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .item-info h3 {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .item-info p {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            color: #dddddd;
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           6. BOTÕES
+           ========================================================================== */
+        .cta-btn {
+            font-family: var(--font-code);
+            display: inline-block;
+            padding: 1.1rem 2.5rem;
+            border: 2px solid var(--text-color);
+            color: var(--text-color);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            background: transparent;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .cta-btn:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* ==========================================================================
+           7. CONTATO
+           ========================================================================== */
+        .contact-layout {
+            display: flex;
+            flex-direction: row;
+            gap: 5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-info { flex: 1; }
+        .contact-info h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.2rem; }
+        .contact-info p { margin-bottom: 1.5rem; color: var(--text-muted); }
+
+        .social-links { margin-top: 3.5rem; }
+        .social-links h4 { font-family: var(--font-code); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 1.2rem; color: var(--accent-color); }
+        .social-grid { display: flex; gap: 1rem; flex-wrap: wrap; }
+        
+        .social-item {
+            font-family: var(--font-code);
+            color: var(--text-color);
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            background-color: var(--card-bg);
+        }
+
+        .social-item:hover {
+            border-color: var(--text-color);
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .contact-form {
+            flex: 1;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+        }
+
+        .form-group { margin-bottom: 1.8rem; }
+        .form-group label { font-family: var(--font-code); display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.6rem; color: var(--text-muted); }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.9rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--text-color);
+            background-color: var(--card-bg);
+        }
+
+        .submit-btn {
+            font-family: var(--font-code);
+            width: 100%;
+            padding: 1.1rem;
+            background-color: transparent;
+            border: 2px solid var(--text-color);
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* ==========================================================================
+           8. LIGHTBOX MODAL AVANÇADO (NAVEGAÇÃO INTERNA)
+           ========================================================================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--modal-bg);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 950px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: var(--text-color);
+            font-size: 3rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(16, 16, 16, 0.3);
+            backdrop-filter: blur(5px);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 15;
+        }
+
+        .modal-nav:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .modal-nav.prev { left: -70px; }
+        .modal-nav.next { right: -70px; }
+
+        .modal-img-container {
+            width: 100%;
+            max-height: 58vh;
+            overflow: hidden;
+            background-color: #222;
+        }
+
+        .modal-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-details {
+            padding: 2.5rem;
+            color: var(--text-color);
+        }
+
+        .modal-meta { font-family: var(--font-code); font-size: 0.8rem; color: var(--accent-color); margin-bottom: 0.6rem; }
+        .modal-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; }
+        .modal-description { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* ==========================================================================
+           9. RESPONSIVIDADE & FOOTER STYLES
+           ========================================================================== */
+        .main-footer {
+            text-align: center; 
+            padding: 3rem 2rem; 
+            border-top: 1px solid var(--border-color); 
+            font-family: var(--font-code); 
+            font-size: 0.8rem; 
+            color: var(--text-muted);
+            transition: border-color 0.4s ease;
+        }
+
+        @media (max-width: 992px) {
+            .modal-nav.prev { left: 10px; top: 40%; }
+            .modal-nav.next { right: 10px; top: 40%; }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: flex; }
+            .nav-menu {
+                position: fixed;
+                top: 65px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 65px);
+                background-color: var(--bg-color);
+                flex-direction: column;
+                justify-content: center;
+                gap: 3rem;
+                transition: left 0.4s ease;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .nav-menu.mobile-active { left: 0; }
+            .hero-content h1 { font-size: 2.6rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .item-info { opacity: 1; background: rgba(17, 17, 17, 0.75); padding: 1.5rem; }
+            .filter-container { overflow-x: auto; padding-bottom: 0.5rem; }
+            .contact-layout { flex-direction: column; gap: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" data-target="home">olhar<span>.</span>doc</a>
+            
+            <div class="nav-right">
+                <button class="theme-toggle-btn" id="themeToggle">Modo Escuro</button>
+                <button class="menu-toggle" id="mobileMenuBtn" aria-label="Abrir Menu">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#home" class="nav-link active" data-target="home">Home</a></li>
+                    <li><a href="#ensaios" class="nav-link" data-target="ensaios">Ensaios</a></li>
+                    <li><a href="#contato" class="nav-link" data-target="contato">Contato</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-section-wrapper" id="home-section-hero">
+        <div class="top-slider-container">
+            <ul class="top-slider" id="topSlider">
+                <li style="background-image: url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1920')"></li>
+                <li style="background-image: url('https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=1920')"></li>
+                <li style="background-image: url('https://images.unsplash.com/photo-1493863641943-9b68992a8d07?q=80&w=1920')"></li>
+            </ul>
+            <div class="slider-overlay"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1>Histórias Gravadas na Realidade</h1>
+            <p>A fotografia documental não busca a pose perfeita, mas sim o testemunho visual do tempo, da sociedade e da condição humana. Cada clique guarda a memória crua de um instante real.</p>
+            <button class="cta-btn" onclick="navigateTo('ensaios')">Explorar Projetos</button>
+        </div>
+    </div>
+
+    <main class="container">
+
+        <section id="ensaios-section">
+            <div class="section-header">
+                <h2>Ensaios Fotográficos</h2>
+                <p>Projetos documentais profundos explorando recortes urbanos, sociais e de resistência cultural.</p>
+            </div>
+
+            <div class="filter-container">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="urbano">Urbano</button>
+                <button class="filter-btn" data-filter="social">Social</button>
+            </div>
+
+            <div class="essay-text-container">
+                <div id="text-all" class="essay-text-lead active-text">
+                    "Não existem fatos, apenas interpretações."
+                    A rua acorda antes do sol fazer curvas no asfalto frio.
+                    Onde a cidade silencia, a lente testemunha.
+                    Entre o cansaço visível e a invisibilidade do passo,
+                    o clique congela o tempo que a rotina teima em apagar.
+                </div>
+
+                <div id="text-urbano" class="essay-text-lead">
+                    <strong>Ensaio Urbano: A Cidade em Movimento</strong>
+                    O concreto das metrópoles esconde histórias que passam despercebidas na correria do dia a dia. 
+                    Este espaço reúne registros do fluxo, da arquitetura humana e dos instantes de solidão e conexões nas grandes cidades.
+                </div>
+
+                <div id="text-social" class="essay-text-lead">
+                    <strong>Ensaio Social: Identidade e Resistência</strong>
+                    Mais do que registrar realidades, a fotografia social busca dar voz e permanência a culturas, tradições e lutas cotidianas. 
+                    Um olhar sensível sobre a dignidade humana e as marcas do tempo em nossa sociedade.
+                </div>
+            </div>
+            
+            <div class="gallery-grid" id="galleryGrid">
+                <article class="gallery-item" data-category="urbano" data-meta="São Paulo, 2025 • Por Silva" data-full-img="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1200">
+                    <div class="photo-wrapper">
+                        <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800" alt="Retrato urbano" class="lazy-blur protecting-img">
+                    </div>
+                    <div class="item-info">
+                        <div class="meta">Urbano • São Paulo, 2025</div>
+                        <h3>A Rotina Invisível</h3>
+                        <p>Um registro profundo sobre os trabalhadores da madrugada na metrópole, enfrentando o silêncio das ruas antes do amanhecer.</p>
+                    </div>
+                </article>
+
+                <article class="gallery-item" data-category="social" data-meta="Bahia, 2024 • Por Silva" data-full-img="https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=1200">
+                    <div class="photo-wrapper">
+                        <img src="https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=800" alt="Cultura local" class="lazy-blur protecting-img">
+                    </div>
+                    <div class="item-info">
+                        <div class="meta">Social • Bahia, 2024</div>
+                        <h3>Herança do Mar</h3>
+                        <p>A resistência da pesca artesanal no recôncavo baiano. Rostos marcados pelo sol e uma tradição familiar que resiste ao tempo.</p>
+                    </div>
+                </article>
+
+                <article class="gallery-item" data-category="urbano" data-meta="Minas Gerais, 2026 • Por Silva" data-full-img="https://images.unsplash.com/photo-1493863641943-9b68992a8d07?q=80&w=1200">
+                    <div class="photo-wrapper">
+                        <img src="https://images.unsplash.com/photo-1493863641943-9b68992a8d07?q=80&w=800" alt="Interior ferrovia" class="lazy-blur protecting-img">
+                    </div>
+                    <div class="item-info">
+                        <div class="meta">Urbano • Minas Gerais, 2026</div>
+                        <h3>Trilhos Esquecidos</h3>
+                        <p>O impacto do fechamento das antigas ferrovias no interior. Cidades que vivem no compasso do silêncio e da calmaria bucólica.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="contato-section">
+            <div class="section-header">
+                <h2>Contato & Conexões</h2>
+                <p>Se você tem uma história que precisa ser documentada ou deseja colaborar em projetos artísticos, entre em contato.</p>
+            </div>
+
+            <div class="contact-layout">
+                <div class="contact-info">
+                    <h3>Vamos Conversar?</h3>
+                    <p>Disponível para projetos documentais independentes, reportagens especiais, licenciamento de imagens e exposições curatoriais.</p>
+                    <p><strong>Email:</strong> contato@olhardocumental.com</p>
+
+                    <div class="social-links">
+                        <h4>Siga no Universo Digital</h4>
+                        <div class="social-grid">
+                            <a href="https://instagram.com" target="_blank" class="social-item">Instagram</a>
+                            <a href="https://behance.net" target="_blank" class="social-item">Behance</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <form id="formContato" onsubmit="event.preventDefault(); alert('Mensagem enviada!');">
+                        <div class="form-group">
+                            <label for="nome">Seu Nome</label>
+                            <input type="text" id="nome" required placeholder="Ex: João Silva">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Seu E-mail</label>
+                            <input type="email" id="email" required placeholder="Ex: joao@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="mensagem">Sobre qual história quer falar?</label>
+                            <textarea id="mensagem" rows="5" required placeholder="Descreva sua proposta..."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2026 Olhar Documental. Todos os direitos reservados. Proibida a cópia ou reprodução não autorizada das imagens.</p>
+    </footer>
+
+    <div class="modal" id="photoModal">
+        <button class="modal-nav prev" id="prevPhoto" aria-label="Foto anterior">&#10094;</button>
+        <button class="modal-nav next" id="nextPhoto" aria-label="Próxima foto">&#10095;</button>
+        
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="modal-img-container">
+                <img id="modalImg" src="" alt="" class="protecting-img">
+            </div>
+            <div class="modal-details">
+                <div class="modal-meta" id="modalMeta"></div>
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <p class="modal-description" id="modalDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* 1. CARROSSEL HERO SLIDER */
+        const slides = document.querySelectorAll('#topSlider li');
+        let currentSlideIndex = 0;
+        if(slides.length > 0) {
+            slides[0].style.opacity = '1';
+            setInterval(() => {
+                slides[currentSlideIndex].style.opacity = '0';
+                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+                slides[currentSlideIndex].style.opacity = '1';
+            }, 5000);
+        }
+
+        /* 2. GERENCIAMENTO DE TEMA (DARK / LIGHT MODE) */
+        const themeToggleBtn = document.getElementById('themeToggle');
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if(document.body.classList.contains('dark-mode')) {
+                themeToggleBtn.innerText = "Modo Claro";
+            } else {
+                themeToggleBtn.innerText = "Modo Escuro";
+            }
+        });
+
+        /* 3. SIMULAÇÃO DE LAZY LOADING */
+        document.querySelectorAll('.lazy-blur').forEach(img => {
+            const tempImg = new Image();
+            tempImg.src = img.src;
+            tempImg.onload = () => { img.classList.add('loaded'); };
+        });
+
+        /* 4. FILTRO DINÂMICO DE PROJETOS E TEXTOS */
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const essayTexts = document.querySelectorAll('.essay-text-lead');
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filterValue = btn.getAttribute('data-filter');
+                
+                essayTexts.forEach(text => text.classList.remove('active-text'));
+                const activeText = document.getElementById(`text-${filterValue}`);
+                if (activeText) activeText.classList.add('active-text');
+
+                galleryItems.forEach(item => {
+                    if(filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                        item.classList.remove('hidden');
+                        item.style.opacity = '0';
+                        setTimeout(() => { item.style.opacity = '1'; }, 50);
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        /* 5. NAVEGAÇÃO INTERNA SPA */
+        const navLinks = document.querySelectorAll('.nav-link, .nav-logo');
+        const sections = document.querySelectorAll('main.container > section');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navMenu = document.getElementById('navMenu');
+        const heroWrapper = document.getElementById('home-section-hero');
+
+        function navigateTo(targetId) {
+            sections.forEach(sec => sec.classList.remove('active-section'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+            if (targetId === 'home') {
+                heroWrapper.style.display = 'flex';
+                document.body.classList.remove('scrolled-nav');
+            } else {
+                heroWrapper.style.display = 'none';
+                document.body.classList.add('scrolled-nav');
+                const activeSection = document.getElementById(`${targetId}-section`);
+                if (activeSection) activeSection.classList.add('active-section');
+            }
+
+            const activeLink = document.querySelector(`.nav-link[data-target="${targetId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+            navMenu.classList.remove('mobile-active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-target');
+                if (target) navigateTo(target);
+            });
+        });
+        mobileMenuBtn.addEventListener('click', () => { navMenu.classList.toggle('mobile-active'); });
+
+        /* 6. LIGHTBOX AVANÇADO */
+        const modal = document.getElementById('photoModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalMeta = document.getElementById('modalMeta');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        
+        let visibleItems = [];
+        let currentModalIndex = 0;
+
+        function updateModalContent(index) {
+            if(index < 0 || index >= visibleItems.length) return;
+            currentModalIndex = index;
+            const item = visibleItems[currentModalIndex];
+            
+            modalImg.src = item.getAttribute('data-full-img');
+            modalMeta.innerText = item.getAttribute('data-meta');
+            modalTitle.innerText = item.querySelector('h3').innerText;
+            modalDesc.innerText = item.querySelector('.item-info p').innerText;
+        }
+
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                visibleItems = Array.from(galleryItems).filter(i => !i.classList.contains('hidden'));
+                const index = visibleItems.indexOf(item);
+                
+                updateModalContent(index);
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            setTimeout(() => { modalImg.src = ''; }, 300);
+        }
+
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('prevPhoto').addEventListener('click', () => {
+            if(currentModalIndex > 0) updateModalContent(currentModalIndex - 1);
+        });
+        document.getElementById('nextPhoto').addEventListener('click', () => {
+            if(currentModalIndex < visibleItems.length - 1) updateModalContent(currentModalIndex + 1);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!modal.classList.contains('active')) return;
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowRight' && currentModalIndex < visibleItems.length - 1) updateModalContent(currentModalIndex + 1);
+            if (e.key === 'ArrowLeft' && currentModalIndex > 0) updateModalContent(currentModalIndex - 1);
+        });
+
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        /* ==========================================================================
+           7. TRAVAS DE SEGURANÇA (BLOQUEIO DE DOWNLOAD)
+           ========================================================================== */
+        // Bloqueia clique com botão direito nas imagens marcadas para proteção
+        document.addEventListener('contextmenu', (e) => {
+            if (e.target.classList.contains('protecting-img') || e.target.closest('.gallery-item')) {
+                e.preventDefault();
+            }
+        });
+
+        // Bloqueia a ação de clicar e "arrastar" a imagem
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('protecting-img') || e.target.tagName === 'IMG') {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
